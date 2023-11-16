@@ -1,0 +1,506 @@
+<!-- 
+    Autores:
+    Claiton Lopes Matavela 
+    Belmiro Chaguala
+ -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolução de Sistemas Lineares</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .equacao {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .ultima-coluna {
+            background-color: #e0e0e0;
+            /* Cor de fundo para a última coluna */
+        }
+
+        .formula {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label,
+        input,
+        button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label,
+        input,
+        button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .equacao {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .formula {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .matriz {
+            display: inline-block;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .matriz-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .matriz-row {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h2>Resolução de Sistemas Lineares <br> Metodo Jacobi</h2>
+        <form action="" class="form" method="post">
+          
+            <div class="form-group row">
+                <label for="eps" class="col-sm-2 col-form-label">eps</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="eps" name="eps" value="0.001" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">X inicial</label>
+                <div class="col-sm-10 row">
+                    <div class="col">
+                        <input type="text" class="form-control" name="x0" value="0" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="x1" value="0" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="x2" value="0" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="num" class="col-sm-2 col-form-label">Número de Iterações(Opcional)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="num" name="num">
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>a11</th>
+                        <th>a12</th>
+                        <th>a13</th>
+                        <th></th>
+                        <th>b</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>f1(x)</th>
+                        <td><input type="text" class="form-control" name="a11" value="10" required></td>
+                        <td><input type="text" class="form-control" name="a12" value="2" required></td>
+                        <td><input type="text" class="form-control" name="a13" value="1" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b1" name="b1" value="9" required></td>
+                    </tr>
+                    <tr>
+                        <th>f2(x)</th>
+                        <td><input type="text" class="form-control" name="a21" value="2" required></td>
+                        <td><input type="text" class="form-control" name="a22" value="20" required></td>
+                        <td><input type="text" class="form-control" name="a23" value="-2" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b2" name="b2" value="-44" required></td>
+                    </tr>
+                    <tr>
+                        <th>f3(x)</th>
+                        <td><input type="text" class="form-control" name="a31" value="-2" required></td>
+                        <td><input type="text" class="form-control" name="a32" value="3" required></td>
+                        <td><input type="text" class="form-control" name="a33" value="10" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b3" name="b3" value="22" required></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </form>
+        <div id="matriz-A" class="equacao"></div>
+      
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelector('.form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                   
+                    // Atualizar a exibição das fórmulas
+
+                    var eps = parseFloat(document.querySelector('#eps').value);
+                    var x1 = parseFloat(document.querySelector('[name="x0"]').value);
+                    var x2 = parseFloat(document.querySelector('[name="x1"]').value);
+                    var x3 = parseFloat(document.querySelector('[name="x2"]').value);
+                    var numIteracoes = parseInt(document.querySelector('#num').value);
+
+                    // Ler os valores
+                    var a11 = parseFloat(document.querySelector('[name="a11"]').value);
+                    var a12 = parseFloat(document.querySelector('[name="a12"]').value);
+                    var a13 = parseFloat(document.querySelector('[name="a13"]').value);
+                    var a21 = parseFloat(document.querySelector('[name="a21"]').value);
+                    var a22 = parseFloat(document.querySelector('[name="a22"]').value);
+                    var a23 = parseFloat(document.querySelector('[name="a23"]').value);
+                    var a31 = parseFloat(document.querySelector('[name="a31"]').value);
+                    var a32 = parseFloat(document.querySelector('[name="a32"]').value);
+                    var a33 = parseFloat(document.querySelector('[name="a33"]').value);
+
+                    var b1 = parseFloat(document.querySelector('#b1').value);
+                    var b2 = parseFloat(document.querySelector('#b2').value);
+                    var b3 = parseFloat(document.querySelector('#b3').value);
+
+                    // Criar a matriz A
+                    var A = [
+                        [a11, a12, a13],
+                        [a21, a22, a23],
+                        [a31, a32, a33]
+                    ];
+
+                    var A2 = [
+                        [a11, a12, a13],
+                        [a21, a22, a23],
+                        [a31, a32, a33]
+                    ];
+                    // Criar o vetor b
+                    var b = [b1, b2, b3];
+
+                    // Criar uma tabela para exibir os valores
+                    var tabelaHTML = '<h4>Matriz A</h4><table class="table">';
+                    for (var i = 0; i < 3; i++) {
+                        tabelaHTML += '<tr>';
+                        var aii = A[i][i];
+                        for (var j = 0; j < 3; j++) {
+                            A[i][j] = A[i][j] / aii;
+                            tabelaHTML += '<td>' + A[i][j] + '</td>';
+                        }
+                        // Adicionar os valores de b divididos por aii
+                        tabelaHTML += '<td class="ultima-coluna">' + (b[i] / aii) + '</td>';
+                        tabelaHTML += '</tr>';
+                    }
+                    tabelaHTML += '</table>';
+
+                    // Adicionar a tabela à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML = tabelaHTML;
+
+                    // Exibir as equações
+                    var equacoesHTML = '<h4>Equações</h4>';
+                    equacoesHTML += '<div class="equacao">' + a11 + 'x1 + ' + a12 + 'x2 + ' + a13 + 'x3 = ' + b1 + '</div>';
+                    equacoesHTML += '<div class="equacao">' + a21 + 'x1 + ' + a22 + 'x2 + ' + a23 + 'x3 = ' + b2 + '</div>';
+                    equacoesHTML += '<div class="equacao">' + a31 + 'x1 + ' + a32 + 'x2 + ' + a33 + 'x3 = ' + b3 + '</div>';
+
+                    // Adicionar as equações à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += equacoesHTML;
+
+                    // Definindo a matriz A e o vetor b
+                    var A = [
+                        [a11, a12, a13],
+                        [a21, a22, a23],
+                        [a31, a32, a33]
+                    ];
+
+                    var b = [b1, b2, b3];
+
+                    // Exibir as equações isoladas
+                    var equacoesIsoladasHTML = '<h4>Equações Isoladas</h4>';
+
+                    for (var i = 0; i < 3; i++) {
+                        var equacao = 'x' + (i + 1) + ' = ';
+                        for (var j = 0; j < 3; j++) {
+                            if (j !== i) {
+                                equacao += (b[i] / A[i][i]) + ' - (' + (A[i][j] / A[i][i]) + ')x' + (j + 1) + ' ';
+                            }
+                        }
+                        equacoesIsoladasHTML += '<div class="equacao">' + equacao + '</div>';
+                    }
+
+                    // Adicionar as equações isoladas à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += equacoesIsoladasHTML;
+
+                    // Criar uma tabela para exibir os valores
+                    // Criar uma tabela para exibir os valores
+                    var tabelaHTML = '<h4>Matriz A</h4><table class="table">';
+
+                    var h = [];
+                    for (var i = 0; i < 3; i++) {
+                        tabelaHTML += '<tr>';
+                        var aii = A[i][i];
+                        for (var j = 0; j < 3; j++) {
+                            if (i === j) {
+                                A[i][j] = 0; // Definindo o valor da diagonal principal como 0
+                            } else {
+                                A[i][j] = A[i][j] / aii; // Dividindo os elementos não-diagonais por aii
+                            }
+                            tabelaHTML += '<td>' + A[i][j] + '</td>';
+                        }
+                        // Adicionar os valores de b divididos por aii
+                        tabelaHTML += '<td class="ultima-coluna">' + (h[i] = b[i] / aii) + '</td>';
+                        tabelaHTML += '</tr>';
+                    }
+                    tabelaHTML += '</table>';
+
+                    // Adicionar a tabela à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += tabelaHTML;
+                    // Criar uma cópia de A e b antes de qualquer alteração
+                    var G = [];
+                    var vetorH = [];
+
+                    for (var i = 0; i < 3; i++) {
+                        G[i] = [];
+                        vetorH[i] = h[i];
+                        for (var j = 0; j < 3; j++) {
+                            G[i][j] = A[i][j];
+                        }
+                    }
+
+                    // Exibir a nova matriz G
+                    var matrizG = '<h4>Matriz G</h4><table class="table">';
+                    for (var i = 0; i < 3; i++) {
+                        matrizG += '<tr>';
+                        for (var j = 0; j < 3; j++) {
+                            matrizG += '<td>' + G[i][j] + '</td>';
+                        }
+                        matrizG += '</tr>';
+                    }
+                    matrizG += '</table>';
+
+                    // Exibir o novo vetor b
+                    var vetorB = '<h4>Vetor b</h4><ul>';
+                    for (var i = 0; i < 3; i++) {
+                        vetorB += '<li>' + vetorH[i] + '</li>';
+                    }
+                    vetorB += '</ul>';
+
+                    // Adicionar a nova matriz G à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += matrizG;
+
+                    // Adicionar o novo vetor b à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += vetorB;
+                    // Calcular o somatório dos quadrados dos valores de G
+                    var somaQuadrados = 0;
+                    for (var i = 0; i < 3; i++) {
+                        for (var j = 0; j < 3; j++) {
+                            somaQuadrados += Math.pow(G[i][j], 2);
+                        }
+                    }
+
+                    // Tirar a raiz quadrada do somatório
+                    var raiz = Math.sqrt(somaQuadrados);
+
+                    // Exibir o resultado
+                    var resultadoHTML = '<h4>Resultado</h4>';
+                    resultadoHTML += '||G|| = √(' + G[0][0] + '^2 + ' + G[0][1] + '^2 + ' + G[0][2] + '^2 + ' + G[1][0] + '^2 + ' + G[1][1] + '^2 + ' + G[1][2] + '^2 + ' + G[2][0] + '^2 + ' + G[2][1] + '^2 + ' + G[2][2] + '^2) ';
+                    resultadoHTML += '<br>||G|| = √(' + somaQuadrados + ') = ' + raiz;
+
+                    // Adicionar o resultado à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML += resultadoHTML;
+
+                    // Definindo o número máximo de iterações e a tolerância
+                 
+                   
+                    var x = [x1, x2, x3];
+                    // Inicializando a tabela de iterações
+                    var tabelaIteracoes = [];
+                    var normaAnterior = Infinity;
+                    if(!numIteracoes){
+                        numIteracoes= 2;
+                    }
+                    // Implementando o Método de Jacobi
+                    for (var iter = 1; iter <= numIteracoes; iter++) {
+                        var xNovo = [];
+
+                        for (var i = 0; i < A2.length; i++) {
+                            var soma = 0;
+
+                            for (var j = 0; j < A2[i].length; j++) {
+                                if (j !== i) {
+                                    soma += A2[i][j] * x[j];
+                                }
+                            }
+
+                            xNovo.push((b[i] - soma) / A2[i][i]);
+                        }
+
+                        // Verificando a convergência
+                        var normaDiferenca = Math.sqrt(xNovo.reduce(function (acc, val, index) {
+                            return acc + Math.pow(val - x[index], 2);
+                        }, 0));
+
+                        // Adicionando os resultados à tabela
+                        tabelaIteracoes.push([iter, xNovo[0], xNovo[1], xNovo[2],         normaDiferenca.toFixed(5)]);
+
+                        if (normaDiferenca < eps || Math.abs(normaDiferenca - normaAnterior) < eps) {
+                            console.log('Convergiu na iteração ' + iter);
+                            break;
+                        }
+                        numIteracoes++;
+                        normaAnterior = normaDiferenca;
+                        x = xNovo;
+                    }
+
+                    // Imprimindo os resultados no console
+                    console.log('Resultados finais:');
+                    console.log('x1:', x[0]);
+                    console.log('x2:', x[1]);
+                    console.log('x3:', x[2]);
+
+                    // ... (o restante do seu código)
+
+                    // Adicionando a tabela de iterações ao HTML
+                    var tabelaIteracoesHTML = '<h4>Tabela de Iterações</h4><table class="table">';
+                    tabelaIteracoesHTML += '<thead><tr><th>Iteração</th><th>x1</th><th>x2</th><th>x3</th><th>Norma</th></tr></thead>';
+                    tabelaIteracoesHTML += '<tbody>';
+
+                    for (var i = 0; i < tabelaIteracoes.length; i++) {
+                        tabelaIteracoesHTML += '<tr>';
+                        tabelaIteracoesHTML += '<td>' + tabelaIteracoes[i][0] + '</td>';
+                        tabelaIteracoesHTML += '<td>' + tabelaIteracoes[i][1] + '</td>';
+                        tabelaIteracoesHTML += '<td>' + tabelaIteracoes[i][2] + '</td>';
+                        tabelaIteracoesHTML += '<td>' + tabelaIteracoes[i][3] + '</td>';
+                        tabelaIteracoesHTML += '<td>' + tabelaIteracoes[i][4] + '</td>';
+                        tabelaIteracoesHTML += '</tr>';
+                    }
+
+                    tabelaIteracoesHTML += '</tbody></table>';
+
+                    document.getElementById('matriz-A').innerHTML += tabelaIteracoesHTML;
+                    var Resultados='<h4>Resultados finais:</h4>';
+                        Resultados+='<h6>x1: '+ x[0] +'</h6>';
+                        Resultados+='<h6>x2: ' + x[1]+'</h6>';
+                        Resultados+='<h6>x3: '+ x[2]+'</h6>';
+                    document.getElementById('matriz-A').innerHTML += Resultados;
+
+                });
+            });
+        </script>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html><!-- 
+    Autores:
+    Claiton Lopes Matavela 
+    Belmiro Chaguala
+ -->

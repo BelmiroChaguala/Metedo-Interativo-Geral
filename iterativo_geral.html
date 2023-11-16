@@ -1,0 +1,531 @@
+<!-- 
+    Autores:
+    Claiton Lopes Matavela 
+    Belmiro Chaguala
+ -->
+ <!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resolução de Sistemas Lineares</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script type="text/javascript" async
+        src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.14.0/katex.min.js"></script>
+
+    <style>
+        .equacao {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .formula {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label,
+        input,
+        button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        label,
+        input,
+        button {
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4CAF50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        .equacao {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .formula {
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .matriz {
+            display: inline-block;
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin: 10px 0;
+        }
+
+        .matriz-header {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .matriz-row {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <h2>Resolução de Sistemas Lineares<br>Iterativo Geral </h2>
+        <form action="" class="form" method="post">
+            <div class="form-group row">
+                <label for="k" class="col-sm-2 col-form-label">K</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="k" name="k" value="0.06390" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="eps" class="col-sm-2 col-form-label">eps</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="eps" name="eps" value="0.001" required>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label class="col-sm-2 col-form-label">X inicial</label>
+                <div class="col-sm-10 row">
+                    <div class="col">
+                        <input type="text" class="form-control" name="x0" value="0" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="x1" value="0" required>
+                    </div>
+                    <div class="col">
+                        <input type="text" class="form-control" name="x2" value="0" required>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group row">
+                <label for="num" class="col-sm-2 col-form-label">Número de Iterações(Opcional)</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="num" name="num" >
+                </div>
+            </div>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>a11</th>
+                        <th>a12</th>
+                        <th>a13</th>
+                        <th></th>
+                        <th>b</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>f1(x)</th>
+                        <td><input type="text" class="form-control" name="a11" value="10" required></td>
+                        <td><input type="text" class="form-control" name="a12" value="2" required></td>
+                        <td><input type="text" class="form-control" name="a13" value="1" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b1" name="b1" value="9" required></td>
+                    </tr>
+                    <tr>
+                        <th>f2(x)</th>
+                        <td><input type="text" class="form-control" name="a21" value="2" required></td>
+                        <td><input type="text" class="form-control" name="a22" value="20" required></td>
+                        <td><input type="text" class="form-control" name="a23" value="-2" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b2" name="b2" value="-44" required></td>
+                    </tr>
+                    <tr>
+                        <th>f3(x)</th>
+                        <td><input type="text" class="form-control" name="a31" value="-2" required></td>
+                        <td><input type="text" class="form-control" name="a32" value="3" required></td>
+                        <td><input type="text" class="form-control" name="a33" value="10" required></td>
+                        <td>=</td>
+                        <td><input type="text" class="form-control" id="b3" name="b3" value="22" required></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-primary">Calcular</button>
+        </form>
+        <div class="equacao">
+            <div id="G_formula" class="formula"></div>
+            <div id="A_formula" class="formula"></div>
+            <div id="K_formula" class="formula"></div>
+            <div id="xzero" class="formula"></div>
+        </div>
+        <div class="result-container"></div>
+        <div id="equacoes" class="equacao"></div>
+        <div id="matriz-A" class="equacao"></div>
+        <div id="matriz-identidade" class="equacao"></div>
+        <!-- <div id="matriz-G" class="equacao"></div> -->
+        <!-- Matrizes -->
+        <div class="row">
+            <div class="matriz" id="matriz-I">
+                <div class="matriz-header">Matriz \(I\)</div>
+                <!-- Conteúdo da matriz I será inserido aqui -->
+            </div>
+
+            <div class="matriz" id="matriz-KA">
+                <div class="matriz-header">Matriz \(KA\)</div>
+                <!-- Conteúdo da matriz KA será inserido aqui -->
+            </div>
+
+            <div class="matriz" id="matriz-G">
+                <div class="matriz-header">Matriz \(G\)</div>
+                <!-- Conteúdo da matriz G será inserido aqui -->
+            </div>
+            <div class="vetor" id="vetor-H"></div>
+            <div class="iteracoes">
+                <div class="iteracoes">
+                    <h2>Tabela de Iterações</h2>
+                    <table id="tabela-iteracoes" class="table">
+                        <thead>
+                            <tr>
+                                <th>Iteração</th>
+                                <th>x1</th>
+                                <th>x2</th>
+                                <th>x3</th>
+                                <th>Critério de Parada</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultados"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                document.querySelector('.form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    // Obter os valores do formulário
+                    var k = parseFloat(document.querySelector('#k').value);
+                    //Atualizar as fórmulas
+
+                    // Atualizar a exibição das fórmulas
+
+                    var eps = parseFloat(document.querySelector('#eps').value);
+                    var x0 = parseFloat(document.querySelector('[name="x0"]').value);
+                    var x1 = parseFloat(document.querySelector('[name="x1"]').value);
+                    var x2 = parseFloat(document.querySelector('[name="x2"]').value);
+                    var numIteracoes = parseInt(document.querySelector('#num').value);
+
+                    var a11 = parseFloat(document.querySelector('[name="a11"]').value);
+                    var a12 = parseFloat(document.querySelector('[name="a12"]').value);
+                    var a13 = parseFloat(document.querySelector('[name="a13"]').value);
+                    var a21 = parseFloat(document.querySelector('[name="a21"]').value);
+                    var a22 = parseFloat(document.querySelector('[name="a22"]').value);
+                    var a23 = parseFloat(document.querySelector('[name="a23"]').value);
+                    var a31 = parseFloat(document.querySelector('[name="a31"]').value);
+                    var a32 = parseFloat(document.querySelector('[name="a32"]').value);
+                    var a33 = parseFloat(document.querySelector('[name="a33"]').value);
+
+                    var b1 = parseFloat(document.querySelector('#b1').value);
+                    var b2 = parseFloat(document.querySelector('#b2').value);
+                    var b3 = parseFloat(document.querySelector('#b3').value);
+                    var G_formula = '\\( G = -KA \\)';
+                    var A_formula = '\\( H = KB \\)';
+                    var K_formula = '\\( K = ' + k + ' \\)';
+                    var xzero = '\\( X0 = (' + x0 + "," + x1 + "," + x2 + ') \\)';
+                    document.getElementById('G_formula').innerHTML = G_formula;
+                    document.getElementById('A_formula').innerHTML = A_formula;
+                    document.getElementById('K_formula').innerHTML = K_formula;
+                    document.getElementById('xzero').innerHTML = xzero;
+                    // Criar a matriz A
+                    var A = [
+                        [a11, a12, a13],
+                        [a21, a22, a23],
+                        [a31, a32, a33]
+                    ];
+
+                    // Criar o vetor b
+                    var b = [b1, b2, b3];
+                    // Construir as equações 
+                    var equacoes = '';
+                    equacoes += '<div>' + katex.renderToString(a11 + 'x_1 + ' + a12 + 'x_2 + ' + a13 + 'x_3 = ' + b1) + '</div>';
+                    equacoes += '<div>' + katex.renderToString(a21 + 'x_1 + ' + a22 + 'x_2 + ' + a23 + 'x_3 = ' + b2) + '</div>';
+                    equacoes += '<div>' + katex.renderToString(a31 + 'x_1 + ' + a32 + 'x_2 + ' + a33 + 'x_3 = ' + b3) + '</div>';
+
+                    document.getElementById('equacoes').innerHTML = equacoes;
+
+                    // Mostrar Matriz A
+                    var tabelaHTML = '<h4>Matriz A</h4><table class="table">';
+                    for (var i = 0; i < 3; i++) {
+                        tabelaHTML += '<tr>';
+                        for (var j = 0; j < 3; j++) {
+                            tabelaHTML += '<td>' + A[i][j] + '</td>';
+                        }
+                        tabelaHTML += '</tr>';
+                    }
+                    tabelaHTML += '</table>';
+
+                    // Adicionar a tabela à div com id "matriz-A"
+                    document.getElementById('matriz-A').innerHTML = tabelaHTML;
+
+
+                    // Mostrar Matriz Identidade
+                    var matrizIdentidade = '<h4>Matriz Identidade</h4><div class="row">';
+                    for (var i = 0; i < 3; i++) {
+                        matrizIdentidade += '<div class="col">';
+                        for (var j = 0; j < 3; j++) {
+                            matrizIdentidade += '<div class="text-center">' + (i == j ? 1 : 0) + '</div>';
+                        }
+                        matrizIdentidade += '</div>';
+                    }
+                    matrizIdentidade += '</div>';
+                    document.getElementById('matriz-identidade').innerHTML = matrizIdentidade;
+
+                    // Calcular a matriz G
+                    var G = [];
+                    for (var i = 0; i < 3; i++) {
+                        G[i] = [];
+                        for (var j = 0; j < 3; j++) {
+                            G[i][j] = (i == j ? 1 : 0) - k * A[i][j];
+                        }
+                    }
+
+                    // Mostrar a matriz G
+                    var matrizG = '';
+                    for (var i = 0; i < 3; i++) {
+                        matrizG += '<div class="row">';
+                        for (var j = 0; j < 3; j++) {
+                            matrizG += '<div class="col text-center">' + G[i][j] + '</div>';
+                        }
+                        matrizG += '</div>';
+                    }
+                    var I = [
+                        [1, 0, 0],
+                        [0, 1, 0],
+                        [0, 0, 1]
+                    ];
+                    // Calcular a matriz KA
+                    var KA = A.map(function (row) {
+                        return row.map(function (element) {
+                            return (k * element).toFixed(5);
+                        });
+                    });
+
+                    // Calcular a matriz G
+                    var G = I.map(function (row, i) {
+                        return row.map(function (element, j) {
+                            return (element - KA[i][j]).toFixed(5);
+                        });
+                    })
+
+                    // Exibir os valores das matrizes
+                    atualizarMatriz('I', I);
+                    atualizarMatriz('KA', KA);
+                    atualizarMatriz('G', G);
+                    var H = b.map(function (element) {
+                        return k * element;
+                    });
+
+                    // Atualizar o vetor H no HTML
+                    atualizarVetor('H', H);
+                    // Renderizar as fórmulas com MathJax
+                    // MathJax.typeset();
+
+                    function atualizarMatriz(nome, matriz) {
+                        var container = document.getElementById('matriz-' + nome);
+                        var html = '<table>';
+                        html += '<th><td>' + 'matriz-' + nome + '</td></th>';
+                        matriz.forEach(function (row) {
+                            html += '<tr>';
+                            row.forEach(function (element) {
+                                html += '<td>' + element + '</td>';
+                            });
+                            html += '</tr>';
+                        });
+                        html += '</table>';
+                        container.innerHTML = html;
+                    }
+
+                    function calcularNorma(x) {
+                        var norma = 0;
+                        for (var i = 0; i < x.length; i++) {
+                            norma += Math.pow(x[i], 2);
+                        }
+                        return Math.sqrt(norma);
+                    }
+                    function atualizarVetor(nome, vetor) {
+                        var container = document.getElementById('vetor-' + nome);
+                        var html = '<div class="vetor-header">Vetor ' + nome + '</div>';
+                        html += '<div class="vetor-content">';
+                        vetor.forEach(function (element) {
+                            html += '<div>' + element + '32323232</div>';
+                        });
+                        html += '</div>';
+                        container.innerHTML = html;
+
+                    }
+                    var tabelaIteracoes = document.getElementById('tabela-iteracoes').getElementsByTagName('tbody')[0];
+                    tabelaIteracoes.innerHTML = '';
+
+
+
+                    const xI = [x0, x1, x2];
+                    const resultadosDiv = document.getElementById("resultados");
+                    resultadosDiv.innerHTML = "";
+                    if (!numIteracoes) {
+                        numIteracoes = 2;
+                    }
+                    let criterioParadaAnterior = "N/A"; // Para a primeira iteração
+
+                    let x = xI.slice(); // Copia os valores de xI
+
+                    for (let k = 0; k <= numIteracoes; k++) {
+                        const xNovo = G.map((row, i) => row.reduce((acc, value, j) => acc + value * x[j], 0) + H[i]);
+
+                        let criterioParada;
+                        if (k > 0) {
+                            const xAnterior = [parseFloat(resultadosDiv.rows[k - 1].cells[1].textContent) || 0,
+                            parseFloat(resultadosDiv.rows[k - 1].cells[2].textContent) || 0,
+                            parseFloat(resultadosDiv.rows[k - 1].cells[3].textContent) || 0];
+                            criterioParada = Math.sqrt(xNovo.reduce((acc, value, i) => acc + Math.pow(value - xAnterior[i], 2), 0)).toFixed(5);
+                            const resultadosRow = document.createElement("tr");
+                            resultadosRow.innerHTML = `
+                        <td>${k}</td>
+                        <td>${x[0].toFixed(5)}</td>
+                        <td>${x[1].toFixed(5)}</td>
+                        <td>${x[2].toFixed(5)}</td>
+                    `;
+
+                            if (criterioParada < eps) {
+                                resultadosRow.innerHTML += `<td>${criterioParada}</td>`;
+                                resultadosDiv.appendChild(resultadosRow);
+                                var Resultados = '<h4>Resultados finais:</h4>';
+                                Resultados += '<h6>x1: ' + x[0].toFixed(5) + '</h6>';
+                                Resultados += '<h6>x2: ' + x[1].toFixed(5) + '</h6>';
+                                Resultados += '<h6>x3: ' + x[2].toFixed(5) + '</h6>';
+                                resultadosDiv.innerHTML += Resultados;
+                                break;
+                            }
+                            resultadosRow.innerHTML += `<td>${criterioParada}</td>`;
+                            resultadosDiv.appendChild(resultadosRow);
+                        } else {
+                            criterioParada = "N/A"
+                            const resultadosRow = document.createElement("tr");
+                            resultadosRow.innerHTML = `
+                        <td>${k}</td>
+                        <td>${x[0].toFixed(5)}</td>
+                        <td>${x[1].toFixed(5)}</td>
+                        <td>${x[2].toFixed(5)}</td>
+                        <td>${criterioParada}</td>
+                    `;
+                            resultadosDiv.appendChild(resultadosRow);
+                        }
+
+
+                        numIteracoes++;
+                        x = xNovo;
+                    }
+
+                });
+            });
+        </script>
+
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html><!-- 
+    Autores:
+    Claiton Lopes Matavela 
+    Belmiro Chaguala
+ -->
